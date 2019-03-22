@@ -58,6 +58,8 @@ protected:
 public:
 	virtual void _validate_script();
 
+	void reload_text();
+
 	Ref<Shader> get_edited_shader() const;
 	void set_edited_shader(const Ref<Shader> &p_shader);
 	ShaderTextEditor();
@@ -99,6 +101,7 @@ class ShaderEditor : public PanelContainer {
 
 	GotoLineDialog *goto_line_dialog;
 	ConfirmationDialog *erase_tab_confirm;
+	ConfirmationDialog *disk_changed;
 
 	ShaderTextEditor *shader_editor;
 
@@ -107,6 +110,9 @@ class ShaderEditor : public PanelContainer {
 	mutable Ref<Shader> shader;
 
 	void _editor_settings_changed();
+
+	void _check_for_external_edit();
+	void _reload_shader_from_disk();
 
 protected:
 	void _notification(int p_what);
@@ -123,7 +129,7 @@ public:
 	void goto_line_selection(int p_line, int p_begin, int p_end);
 
 	virtual Size2 get_minimum_size() const { return Size2(0, 200); }
-	void save_external_data();
+	void save_external_data(const String &p_str = "");
 
 	ShaderEditor(EditorNode *p_node);
 };
