@@ -2538,6 +2538,7 @@ void DisplayServerX11::_update_wm_state_hints(WindowID p_window) {
 	wd.fullscreen = hints.has(fullscreen_atom);
 	wd.maximized = hints.has(maximized_horz_atom) && hints.has(maximized_vert_atom);
 	wd.minimized = hints.has(hidden_atom);
+	wd.minimized_by_wm = wd.minimized;
 }
 
 Point2i DisplayServerX11::window_get_position(WindowID p_window) const {
@@ -3352,15 +3353,19 @@ bool DisplayServerX11::window_is_focused(WindowID p_window) const {
 }
 
 bool DisplayServerX11::window_can_draw(WindowID p_window) const {
-	//this seems to be all that is provided by X11
-	return window_get_mode(p_window) != WINDOW_MODE_MINIMIZED;
+	_THREAD_SAFE_METHOD_
+
+	ERR_FAIL_COND_V(!windows.has(p_window), false);
+	const WindowData &wd = windows[p_window];
+
+	return !wd.minimized_by_wm;
 }
 
 bool DisplayServerX11::can_any_window_draw() const {
 	_THREAD_SAFE_METHOD_
 
 	for (const KeyValue<WindowID, WindowData> &E : windows) {
-		if (window_get_mode(E.key) != WINDOW_MODE_MINIMIZED) {
+		if (!E.value.minimized_by_wm) {
 			return true;
 		}
 	}

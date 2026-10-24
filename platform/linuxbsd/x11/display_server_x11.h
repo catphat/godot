@@ -203,6 +203,8 @@ class DisplayServerX11 : public DisplayServer {
 		bool focused = true;
 		bool minimized = false;
 		bool maximized = false;
+		// Confirmed state from window-manager notifications, not minimize requests.
+		bool minimized_by_wm = false;
 		bool is_popup = false;
 		bool layered_window = false;
 		bool mpass = false;
